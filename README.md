@@ -1,4 +1,4 @@
-# (locate/updatedb)++
+# locate/updatedb 
 Your task is to design a multi-threaded version of the UNIX system utilities <tt>locate</tt> and <tt>updatedb</tt>. These programs were written well before the days of <i>solid state secondary storage</i>, which has become standard issue on most modern machines. Not only does SSD have superior access latency, but it also supports <i>random access</i>. Note that a random-access memory device such as NVMe SSD allows data items to be read or written in almost the same amount of time irrespective of the physical location of data inside the memory, unlike hard disks, CD-ROM, etc.. On top of this, primary storage has also progressed by leaps and bounds since the 80's, to the point that . Your implementation will exploit these facts through multi-threading as to bring <tt>locate</tt> and <tt>updatedb</tt> into the 21st century.
 
 Before you begin the assignment, you should first play around with <tt>locate</tt> and <tt>updatedb</tt> to understand their basic functionality and see how they are related to one another. At the very least, visit their <tt>man</tt> pages.
@@ -17,17 +17,13 @@ The program <tt>locate++ \<pattern\> \<num_threads\> </tt> must exhibit the foll
 5. Kill the process X involved in the most deadlocks and print <tt>Killed X.</tt> to the screen. 
 6. Go to 1.
 
-The program <tt>updatedb++</tt> must exhibit the following behavior.
+The program <tt>updatedb++ \<root_dir\> \<num_threads\></tt> must exhibit the following behavior.
 
-0. Print a list of the userspace processes that are actively reading/writing/waiting on any locked file.
-1. Check for file-related deadlock amongst the userspace processes that are currently running.
-2. If there is no file-related deadlock amongst the userspace processes, print <tt>No deadlock.</tt> to standard out and exit. 
-3. If deadlock has been detected, print <tt>Deadlock!</tt>, and then:
-4. List each instance of deadlock on a new line and display the process names and file names involved.
-5. Kill the process X involved in the most deadlocks and print <tt>Killed X.</tt> to the screen. 
-6. Go to 1.
+  * If <tt>\<num_threads\></tt> is not specified, then the number of threads defaults to twice the number of CPU cores.
+  1. Traverse the file system starting from <tt>\<root_dir\>
+  2. Create 
 
-Note that <tt>updatedb++</tt> must be called before <tt>locate++</tt>. Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently. We will have these two processes share memory so that the queries will be exceptionally fast.
+Note that <tt>updatedb++</tt> must be called before <tt>locate++</tt>. Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently: the database will reside in RAM and the two processes will share this database so that <tt>locate++</tt> never has to read from the disk.  
 
 ## Hints
 
