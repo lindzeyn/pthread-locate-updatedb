@@ -20,7 +20,7 @@ The program <tt>locate++ \<pattern\> \<num_threads\> </tt> must exhibit the foll
 The program <tt>updatedb++ \<root_dir\> \<num_threads\></tt> must exhibit the following behavior.
 
   * If <tt>\<num_threads\></tt> is not specified, then the number of threads defaults to twice the number of CPU cores.
-  1. Traverse the file system starting from <tt>\<root_dir\>
+ 1. Traverse the file system starting from <tt>\<root_dir\></tt>
   2. Create 
 
 Note that <tt>updatedb++</tt> must be called before <tt>locate++</tt>. Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently: the database will reside in RAM and the two processes will share this database so that <tt>locate++</tt> never has to read from the disk.  
