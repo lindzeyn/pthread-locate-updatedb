@@ -5,12 +5,16 @@ Before you begin the assignment, you should first play around with <tt>locate</t
 
 ## Specification
 
+Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently: the database will reside in RAM so <tt>locate++</tt> never has to directly access secondary storage. In other words, <tt>updatedb++</tt> will serve as a daemon that runs in the background that <tt>locate++</tt> will query. This will require some form of IPC. To keep things simple, <i>you may assume that only one copy of locate++ will run at a time</i>, which is most often the case we find ourselves in on say a desktop machine (allowing for many copies of locate++ would introduce more race conditions).
+
+
 Your programs <tt>locate++</tt> and <tt>updatedb++</tt> must be written in the C programming language using POSIX <tt>pthreads</tt>. 
 
-The program <tt>locate++ \<pattern\> \<num_threads\> </tt> must exhibit the following behavior. Typically <tt>\<pattern\></tt> would be <i>regular expression</i>, which would be . To keep things simple, we will support a set of common queries that we dub 
- * full queries: the entire filename is given, e.g., <tt>locate++ foo.txt 1 </tt>
- * prefix queries: a prefix of the filename is given, e.g., <tt>locate++ foo* 1 </tt>
- * suffix queries: a suffix of the filename is given, e.g., <tt>locate++ *.txt 1 </tt>.
+The program <tt>locate++</tt> must have the following prototype: <tt>locate++ \<pattern\> \<num_threads\> </tt>.
+Typically <tt>\<pattern\></tt> would be POSIX <i>regular expression</i>, but to keep things simple, you may assume that <tt>\<pattern\></tt> is in one of the following forms:
+ * full query: the entire filename is given, e.g., <tt>locate++ foo.txt 1 </tt>
+ * prefix query: a prefix of the filename is given, e.g., <tt>locate++ foo* 2 </tt>
+ * suffix query: a suffix of the filename is given, e.g., <tt>locate++ *.txt 5 </tt>.
 
 0. Print a list of the userspace processes that are actively reading/writing/waiting on any locked file.
 1. Check for file-related deadlock amongst the userspace processes that are currently running.
@@ -26,7 +30,6 @@ The program <tt>updatedb++ \<root_dir\> \<num_threads\></tt> must exhibit the fo
  1. Traverse the file system starting from <tt>\<root_dir\></tt>
   2. Create 
 
- Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently: the database will reside in RAM and the two processes will share this database so that <tt>locate++</tt> never has to read from the disk. In other words, <tt>updatedb++</tt> will serve as a daemon that runs in the background that <tt>locate++</tt> will query. To accomplish this, you must use some form of IPC. To keep things simple, <i>you may assume that only one copy of locate++ will run at a time</i>, which is most often the case we find ourselves in on say a desktop machine (allowing for many copies of locate++ would introduce yet another class of potential race conditions).
  
 The most involved part of the assignment will be designing <tt>updatedb++</tt>. 
  
