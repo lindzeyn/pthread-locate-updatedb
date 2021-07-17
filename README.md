@@ -21,21 +21,18 @@ It no <tt>\<pattern\></tt> is provided by the user, then print <tt>usage: locate
 
 The program <tt>updatedb++</tt> must have the following prototype: <tt>updatedb++ \<root_dir\> \<num_threads\></tt>. The argument <tt>\<root_dir\></tt> is name of the root directory to be indexed. The argument <tt><num_threads\></tt> is a positive integer specified by the user. If <tt>\<num_threads\></tt> is not specified, then the number of threads defaults to 1. When <tt>updatedb++</tt> is executed, it should do the following:
  
- 0. Build a database starting from the specified root directory using the specified number of threads.
- * Use a thread pool to traverse the directory structure level by level.
- * The POSIX standard defines seven standard Unix file types: <i>regular, directory, symbolic link, FIFO special, block special, character special, and socket</i>. To keep things simple, we are only concerned with regular files and directories. ou will need to read up a little on file I/O in C. <i>Write the serial version first!</i>
- * Recall that we do not want locate++ to access the disk, so we need a data-structure to reside in memory that represents the database. Simply storing all of the absolute file names as an array of strings is not an option for obvious reasons. The directory structure is inherently tree-like, so a natural choice is to use a tree-like data-structure to represent the database. You should build this data-structure top-down level-by-level in a mutli-threaded fashion using a <i>thread pool</i>. Think carefully about which parts of the tree 
- 1. Wait for locate++ to signal that there is a query waiting to be processed.
- * Use a thread pool to traverse the directory structure level by level.
+ 0. <b>Build</b> a database starting from the specified root directory using the specified number of threads.
  * The POSIX standard defines seven standard Unix file types: <i>regular, directory, symbolic link, FIFO special, block special, character special, and socket</i>. To keep things simple, we are only concerned with regular files and directories. You will need to read up a little on file I/O in C. <i>Write the serial version first!</i>
- 2. Once signaled, process the query using the specified number of threads, then report the result to locate++.
- * Use a thread pool to traverse the directory structure level by level.
- * The POSIX standard defines seven standard Unix file types: <i>regular, directory, symbolic link, FIFO special, block special, character special, and socket</i>. To keep things simple, we are only concerned with regular files and directories. You will need to read up a little on file I/O in C. <i>Write the serial version first!</i>
+ * Since we do not want locate++ to access the disk, we need a data-structure to reside in memory that represents the database. Storing all of the absolute file names as an array of strings is not an option. File systems are inherently tree-like, so a natural choice is to use a tree-like data-structure to represent the database. You should build this data-structure top-down level-by-level in a mutli-threaded fashion using a <i>thread pool</i>. If done properly, your 
+ 1. <b>Wait</b> for locate++ to signal that there is a query waiting to be processed.
+ * This requires IPC that is up to you to decide. 
+ 2. <b>Process</b> the query once signaled using the specified number of threads, then report the result to locate++.
+ * Traverse the data-structure using the specified number of threads with proper load-balancing.
  3. Go to 1.
  
- 
- 
-Load-balancing always poses a challenge when writing multi-threaded programs. Step 0 is I/O bound, so the thread pool does a fine job of keeping the threads busy; however, Step 2 requires some insight to avoid degenerating to a serial solution. If we have any number of threads traversing a tree, then recall from your algorithms notes that at any point a node is in precisely one of the following states: 
+Load-balancing always poses a challenge when writing multi-threaded programs. Step 0 is I/O bound, so the thread pool does a fine job of keeping the threads and CPU busy; however, Step 2 requires more cleverness to evenly distribute the work amongst the threads, as evinced by the following example. Suppose we have 2 threads and that we are traversing a binary tree such that the left subtree has the vast majority of nodes. It may seem natural to assign the first thread to the left subtree and the second thread to the right subtree, but then the second thread will finish way before the first thread, which will be left holding the bag. This situation can be avoided by recollecting some elementary facts about traversal algorithms.
+
+Recall that if we have any number of threads traversing a tree, each starting from the root, then at any point in the execution, a node is in precisely one of the following states: 
  * unmarked: The node has not been discovered by a thread.
  * marked: The node has been discovered by a thread.
  * processed: Every descendant of the node has been processed, where any <tt>NULL</tt> node is processed by default.
@@ -112,9 +109,14 @@ In principle, if you complete all 5 checkpoints, then you will earn full points;
 
 As always, you should focus on writing <i>correct</i> code first before you start making your code more efficient. 
 
-## Bonus and Conclusion
+## Bonus
 
-Unless you have done something clever, your algorithm for resolving queries probably amounts to a parallel brute-force search of a tree-like data-structure that represents the database. This data-structure is crucial since we must ultimately we must report the <i>absolute</i> file names whose last name matches our pattern, but it does not seem to encode any meaningful information about the structure of <i>local</i> file names. There is a way to modify your tree-like data-structure with an auxiliary data-structure(s) used for pattern matching that can quickly find which leaves (local file names) match the pattern. You will be awarded 10 bonus points for a correct implementation of this data-structure(s) that uses multi-threading.
+Unless you have done something clever, your algorithm for resolving queries probably amounts to a parallel brute-force search of a tree-like data-structure that represents the database. While this data-structure is required for reporting the <i>absolute</i> file names whose last name matches our pattern, it does not encode any meaningful information about the structure of <i>local</i> file names. Fortunately, there is a way to patch your tree-like data-structure with an auxiliary data-structure(s) used for pattern matching that can quickly find which leaves (local file names) match the pattern. You will be awarded 10 bonus points for a correct implementation of this data-structure(s) that uses multi-threading.
+ 
+ ## What's Next?
+ 
+ There are a number of ways to go from here. 
+ <b>do not post your solution publically on GitHub.</b> I suggest that you privately post to GitHub and provide the password 
  
 
  
