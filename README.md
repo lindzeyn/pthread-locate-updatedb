@@ -16,12 +16,11 @@ Typically <tt>\<pattern\></tt> would be POSIX regular expression, but to keep th
  * prefix query: a prefix of the local filename is given, e.g., <tt>locate++ foo*</tt>
  * suffix query: a suffix of the local filename is given, e.g., <tt>locate++ *.txt</tt>.
  
-It no <tt>\<pattern\></tt> is provided by the user, then print <tt>usage: locate++ \<pattern\></tt> to standard out. <tt>locate++</tt> should behave as follows:
+It no <tt>\<pattern\></tt> is provided by the user, then print <tt>usage: locate++ \<pattern\></tt> to standard out. To simplify things, you may assume that <tt>updatedb++</tt> has been executed and that the database has been built before <tt>locate++</tt> executes. The program <tt>locate++</tt> should behave as follows:
  
- 0. Check if database has been built. If locate++ attempts to query the database before it has been built, then print <tt>database not ready!</tt> to standard out.
- 1. Check if database is ready.
- 2. Send query to <tt>updatedb++</tt>.
- 3. Go to 1.
+ 1. Send <tt>\<pattern\></tt> to <tt>updatedb++</tt>.
+ 2. Wait for <tt>updatedb++</tt> to service query and print all matches.
+ 3. Exit.
 
 The program <tt>updatedb++</tt> must have the following prototype: <tt>updatedb++ \<root_dir\> \<num_threads\></tt>. The argument <tt>\<root_dir\></tt> is name of the root directory to be indexed. The argument <tt><num_threads\></tt> is a positive integer specified by the user. If <tt>\<num_threads\></tt> is not specified, then the number of threads defaults to 1. When <tt>updatedb++</tt> is executed, it should do the following:
  
@@ -120,9 +119,9 @@ Unless you have done something clever, your algorithm for resolving queries prob
  
  We have made a number of simplifying assumptions along the way, and there is a lesson to be learned by removing each one of these assumptions. If you want to learn more, try removing these assumptions. 
  
- You may be wondering why developers have "left well-enough alone" and not bothered with a multi-threaded implementation of locate/updatedb, or any of these older system utilities, in standard Linux distributions. There are a number of good practical and theoretical reasons for this, which you should think about from a software engineering perspective. For example, when I try to <tt>locate</tt> a file that doesn't exist on my system, it takes about a second, which is a good response time (indeed, faster secondary storage also benefits <tt>locate/updatedb</tt>). Even though the average desktop user might not benefit tremendously from our multi-threaded implementation, there are certainly situations where our implementation would drastically improve performance, e.g., in scenarios where databases must be built quickly and are rapidly queried. The moral of the story is that in the real world, you should carefully evaluate your situation and determine if a multi-threaded solution is actually worth it. They are more prone to errors, and multi-threaded codebases are much more difficult to maintain. For these reasons, during the days of Moore's law, the prevailing belief was to write correct serial programs and let the ever-improving CPU clock speeds make up for the performance down the line. Since the death of Moore's law, we can no longer depend on clock speed to bail us out, so CPU performance gains must be obtained by exploiting parallelism.  
+ You may be wondering why developers have "left well-enough alone" and not bothered with a multi-threaded implementation of locate/updatedb, or any of these older system utilities, in standard Linux distributions. There are a number of good practical and theoretical reasons for this, which you should think about from a software engineering perspective. For example, when I try to <tt>locate</tt> a file that doesn't exist on my system, it takes about a second, which is a good response time (indeed, faster secondary storage also benefits <tt>locate/updatedb</tt>). Even though the average desktop user might not benefit tremendously from our multi-threaded implementation, there are certainly situations where our implementation would drastically improve performance, e.g., in scenarios where databases must be built quickly and are rapidly queried. The moral of the story is that in the real world, you should carefully evaluate your situation and determine if a multi-threaded solution is actually worth it. They are more prone to errors, and multi-threaded codebases are much more difficult to maintain. For these reasons, during the days of Moore's law, a common practice was to write correct serial programs and let the ever-improving CPU clock speeds make up for the performance down the line. Since the death of Moore's law, we can no longer depend on clock speed to bail us out, so CPU performance gains must be obtained by exploiting parallelism.  
  
-A good solution to this assignment will demonstrate that you are proficient at writing concurrent userspace systems programs, which is a nice thing to have in your portfolio, but <b>do not post your solution publically on GitHub.</b> If you would like to share this code with colleagues or potential employers, I suggest that you privately post to GitHub and provide them with a password.
+A good solution to this assignment will demonstrate that you are proficient at writing concurrent userspace systems programs, which is a nice thing to have in your portfolio, but <b>do not post your solution publicly on GitHub.</b> If you would like to share this code with colleagues or potential employers, I suggest that you privately post to GitHub and provide them with a password.
  
 
  
