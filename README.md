@@ -5,7 +5,7 @@ Before you begin the assignment, you should first play around with <tt>locate</t
 
 ## Specification
 
-Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently: the database will reside in RAM so <tt>locate++</tt> never has to directly access secondary storage. In other words, <tt>updatedb++</tt> will serve as a daemon that runs in the background that <tt>locate++</tt> will query. To keep things simple, you may assume that only one copy of updatedb++ and locate++ will run at a time, as allowing for multiple running instances of these programs would introduce even more race conditions.
+Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently: the database will reside in RAM so <tt>locate++</tt> never has to directly access secondary storage. In other words, <tt>updatedb++</tt> will serve as a daemon that runs in the background that <tt>locate++</tt> will query. To keep things simple, you may assume that only one copy of updatedb++ and locate++ will run at a time, as allowing for multiple running instances of these programs would introduce even more concurrency issues.
 
 
 Your programs <tt>locate++</tt> and <tt>updatedb++</tt> must be written completely within in the C programming language using POSIX <tt>pthreads</tt>. 
