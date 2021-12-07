@@ -16,7 +16,7 @@ Typically <tt>\<pattern\></tt> would be POSIX regular expression, but to keep th
  * prefix query: a prefix of the local filename is given, e.g., <tt>locate++ foo*</tt>
  * suffix query: a suffix of the local filename is given, e.g., <tt>locate++ *.txt</tt>.
  
-It no <tt>\<pattern\></tt> is provided by the user, then print <tt>usage: locate++ \<pattern\></tt> to standard out. To simplify things, you may assume that <tt>updatedb++</tt> has been executed and that the database has been built before <tt>locate++</tt> executes. The program <tt>locate++</tt> should behave as follows:
+If no <tt>\<pattern\></tt> is provided by the user, then print <tt>usage: locate++ \<pattern\></tt> to standard out. To simplify things, you may assume that <tt>updatedb++</tt> has been executed and that the database has been built before <tt>locate++</tt> executes. The program <tt>locate++</tt> should behave as follows:
  
  1. Send <tt>\<pattern\></tt> to <tt>updatedb++</tt>.
  2. Wait for <tt>updatedb++</tt> to service query and print all matches.
