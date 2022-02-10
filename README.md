@@ -103,7 +103,8 @@ Write `locate++` (this should be simple -- don't overthink it).
 
 #### Checkpoint 5 (70 points)
 
-You may use the `random_dir.zip` for a test case of medium size, or download the directory structure of https://github.com/torvalds/linux for a large test case.
+#### Test Cases
+You are encouraged to make your own small test cases. Download `random_dir.zip` for a test case of medium size, or download the directory structure of https://github.com/torvalds/linux for a large test case.
 
  
 ## Bonus
