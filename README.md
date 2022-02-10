@@ -123,15 +123,4 @@ Unless you have done something clever, your algorithm for resolving queries prob
  
 A good solution to this assignment will demonstrate that you are proficient at writing concurrent userspace systems programs, which is a nice thing to have in your portfolio, but <b>do not post your solution publicly on GitHub.</b> If you would like to share this code with colleagues or potential employers, I suggest that you privately post to GitHub and provide them with a password.
  
-```mermaid
-sequenceDiagram
-    autonumber
-    Alice->>John: Hello John, how are you?
-    loop Healthcheck
-        John->>John: Fight against hypochondria
-    end
-    Note right of John: Rational thoughts!
-    John-->>Alice: Great!
-    John->>Bob: How about you?
-    Bob-->>John: Jolly good!
-```
+[![](https://mermaid.ink/img/pako:eNplz8EKwjAMANBfKTm67eKxBw86D94Ej9ZDtmZaaFdpU0HG_t2ObTAwp5C8hGSA1msCCZGRqTb4DOiqz171Isd99xBVdRDprXNXN0UhpDgmY7WokbHBSDO0vl3Bn79cTzPaVCe0mdmgNaAER8Gh0fm4Yeop4Bc5UiBzqqnDZFmB6sdM59VnbdgHkB3aSCVgYn_79i1IDolWtPy4qPEHL8RQEg)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNplz8EKwjAMANBfKTm67eKxBw86D94Ej9ZDtmZaaFdpU0HG_t2ObTAwp5C8hGSA1msCCZGRqTb4DOiqz171Isd99xBVdRDprXNXN0UhpDgmY7WokbHBSDO0vl3Bn79cTzPaVCe0mdmgNaAER8Gh0fm4Yeop4Bc5UiBzqqnDZFmB6sdM59VnbdgHkB3aSCVgYn_79i1IDolWtPy4qPEHL8RQEg)
