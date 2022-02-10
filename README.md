@@ -5,36 +5,39 @@ Before you begin the assignment, you should first play around with <tt>locate</t
 
 ## Specification
 
-Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently: the database will reside in RAM so <tt>locate++</tt> never has to directly access secondary storage. In other words, <tt>updatedb++</tt> will serve as a daemon that runs in the background that <tt>locate++</tt> will query. To keep things simple, you may assume that only one copy of updatedb++ and locate++ will run at a time, as allowing for multiple running instances of these programs would introduce even more concurrency issues.
+Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently: the database will reside in RAM so <tt>locate++</tt> never has to directly access secondary storage. In other words, <tt>updatedb++</tt> will serve as a daemon that runs in the background that <tt>locate++</tt> will query. To keep things simple, you may assume that only one copy of `updatedb++` and `locate++` will run at a time, as allowing for multiple running instances of these programs would introduce even more concurrency issues. Your programs <tt>locate++</tt> and <tt>updatedb++</tt> must be written completely within in the C programming language using POSIX <tt>pthreads</tt>. 
 
-
-Your programs <tt>locate++</tt> and <tt>updatedb++</tt> must be written completely within in the C programming language using POSIX <tt>pthreads</tt>. 
-
-In particular, the program <tt>locate++</tt> must have the following prototype: <tt>locate++ \<pattern\></tt>.
+### <tt>locate++</tt>
+The program <tt>locate++</tt> must have the following prototype: <tt>locate++ -q \<pattern\> | -k</tt>.
 Typically <tt>\<pattern\></tt> would be POSIX regular expression, but to keep things simple, you may assume that <tt>\<pattern\></tt> is in one of the following forms:
- * full query: the entire local filename is given, e.g., <tt>locate++ foo.txt</tt>
- * prefix query: a prefix of the local filename is given, e.g., <tt>locate++ foo*</tt>
- * suffix query: a suffix of the local filename is given, e.g., <tt>locate++ *.txt</tt>.
+ * full query: the entire local filename is given, e.g., <tt>locate++ -q foo.txt</tt>,
+ * prefix query: a prefix of the local filename is given, e.g., <tt>locate++ -q foo*</tt>,
+ * suffix query: a suffix of the local filename is given, e.g., <tt>locate++ -q *.txt</tt>,
+ * kill query: send a signal to `updatedb++` to terminate that process, e.g., `locate++ -k`.
  
-If no <tt>\<pattern\></tt> is provided by the user, then print <tt>usage: locate++ \<pattern\></tt> to standard out. To simplify things, you may assume that <tt>updatedb++</tt> has been executed and that the database has been built before <tt>locate++</tt> executes. The program <tt>locate++</tt> should behave as follows:
+If the user does not adhere to the format above, print <tt>usage: locate++ -q \<pattern\> | -k</tt> to `stdout`. To simplify things, you may assume that <tt>updatedb++</tt> has been executed and that the database has been built before <tt>locate++</tt> executes. The program <tt>locate++</tt> should behave as follows:
  
  1. Send <tt>\<pattern\></tt> to <tt>updatedb++</tt>.
- 2. Wait for <tt>updatedb++</tt> to service query and print all matches.
+ 2. <i>Immediately</i> print any match that <tt>updatedb++</tt> discovers.
  3. Exit.
-
+ 
+### <tt>updatedb++</tt>
 The program <tt>updatedb++</tt> must have the following prototype: <tt>updatedb++ \<root_dir\> \<num_threads\></tt>. The argument <tt>\<root_dir\></tt> is name of the root directory to be indexed. The argument <tt><num_threads\></tt> is a positive integer specified by the user. If <tt>\<num_threads\></tt> is not specified, then the number of threads defaults to 1. When <tt>updatedb++</tt> is executed, it should do the following:
  
  0. <b>Build</b> a database starting from the specified root directory using the specified number of threads.
  * The POSIX standard defines seven standard Unix file types: <i>regular, directory, symbolic link, FIFO special, block special, character special, and socket</i>. To keep things simple, we are only concerned with regular files and directories. You will need to read up a little on file I/O in C. 
- * Since we do not want locate++ to access the disk, we need a data-structure to reside in memory that represents the database. Storing all of the absolute file names as an array of strings is not an option. File systems are inherently tree-like, so a natural choice is to use a tree-like data-structure to represent the database. You should build this data-structure top-down level-by-level in a mutli-threaded fashion using a <i>thread pool</i>. 
+ * Since we do not want `locate++` to access the disk, we need a data-structure to reside in memory that represents the database. Storing all of the absolute file names as an array of strings is not an option. File systems are inherently tree-like, so a natural choice is to use a tree-like data-structure to represent the database. You should build this data-structure top-down level-by-level in a mutli-threaded fashion using a <i>thread pool</i>. 
  1. <b>Wait</b> for locate++ to signal that there is a query waiting to be processed.
  * This will require IPC. We do not want <tt>locate++</tt> and <tt>updatedb++</tt> to busy-wait under any circumstance, so your IPC solution must account for this.
  2. <b>Process</b> the query once signaled using the specified number of threads, then report the result to locate++.
  * Traverse the data-structure using the specified number of threads with proper load-balancing.
  * Once a match is found, the thread should immediately send the absolute file name to <tt>locate++</tt>.
- 3. Go to 1.
- 
-Load-balancing always poses a challenge when writing multi-threaded programs. Step 0 is I/O bound, so the thread pool does a fine job of keeping the threads and CPU busy; however, Step 2 requires more cleverness to evenly distribute the work amongst the threads, as seen by the following example. Suppose we have 2 threads and that we are traversing a binary tree such that the left subtree has the vast majority of nodes. It may seem natural to assign the first thread to the left subtree and the second thread to the right subtree, but then the second thread will finish way before the first thread, which will be left holding the bag. This situation can be avoided by recollecting some elementary facts about traversal algorithms.
+ 3. <b>Exit</b> if <tt>locate++</tt> is passed the kill flag `-k`; otherwise, Go to 1.
+
+[![](https://mermaid.ink/img/pako:eNptj7EOwjAMRH8l8tp2YczAAGVgQ2LN4tYuREoalDpIqOq_E9QWdehN9vn5ZI_QBmLQMAgK1xYfEX31PpheZaUXZZeaolBVddy2Wp2SdaRqFGxw4Jl3oc3AHn29nXcj_xsbZBWU4Dl6tJTvG38zA_JkzwZ0Lok7TE4MmH7K6Bx8ISshgu7QDVwCJgn3T9-Clph4hZY3F2r6AnaeUUM)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNptj7EOwjAMRH8l8tp2YczAAGVgQ2LN4tYuREoalDpIqOq_E9QWdehN9vn5ZI_QBmLQMAgK1xYfEX31PpheZaUXZZeaolBVddy2Wp2SdaRqFGxw4Jl3oc3AHn29nXcj_xsbZBWU4Dl6tJTvG38zA_JkzwZ0Lok7TE4MmH7K6Bx8ISshgu7QDVwCJgn3T9-Clph4hZY3F2r6AnaeUUM)
+
+ ### Load Balancing
+Load balancing always poses a challenge when writing multi-threaded programs. Step 0 is I/O bound, so the thread pool does a fine job of keeping the threads and CPU busy; however, Step 2 requires more cleverness to evenly distribute the work amongst the threads, as seen by the following example. Suppose we have 2 threads and that we are traversing a binary tree such that the left subtree has the vast majority of nodes. It may seem natural to assign the first thread to the left subtree and the second thread to the right subtree, but then the second thread will finish way before the first thread, which will be left holding the bag. This situation can be avoided by recollecting some elementary facts about traversal algorithms.
 
 Recall that if we have any number of threads traversing a tree, each starting from the root, then at any point in the execution, a node is in precisely one of the following states: 
  * unmarked: The node has not been discovered by a thread.
@@ -51,9 +54,9 @@ For some of us, this might be the first time we are doing a serious concurrent p
  
  Below are some miscellanious things to keep in mind while writing your program.
 
- * The locate++ process will need to know the PID of updatedb++. This is a common problem when dealing with daemons that has many straightforward solutions, some more elegant than others, which is left for you to decide.
- * You should write a 
- * Once a node is processed, by definition, no threads will ever traverse any of the nodes below it again. This should help you "reset things" so your data-structure will be ready for the next query.
+ * `locate++` and `updatedb++` are not parent-child processes. Think about what IPC is most appropriate.
+ * When `updatedb++` finds a match, the <i>absolute</i> file name of the matched file must be sent over to `locate++`. Think about introducing another pointer to tree data-structure to help you crawl up the tree to recover the absolute file name of the matched file.    
+ * Once a node is processed, by definition, no threads will ever traverse any of the nodes below it again. This should give you a clever way to "reset things" so that your tree data-structure will be ready for the next query.
 
 ## Grading
 
@@ -100,14 +103,7 @@ Write locate++ (this should be simple -- don't overthink it).
  
 #### Checkpoint 4 (60 points) 
 
-Steps 0-4, i.e., report whether a single deadlock has occurred or not occurred, print the process names and file names involved in that deadlock, kill any process involved in that deadlock, then repeat.
-
 #### Checkpoint 5 (70 points)
-
-Steps 0-6, i.e., report whether deadlock has occurred or not, and if so, list <i>many</i> ocurrences of deadlock and kill the process involved in the most ocurrences of deadlock, then repeat.
-
-In principle, if you complete all 5 checkpoints, then you will earn full points; however, if any bugs in your code are made apparent by the test cases, then you will earn partial credit TBD. 
-
 
 As always, you should focus on writing <i>correct</i> code first before you start making your code more efficient. 
 
@@ -122,5 +118,3 @@ Unless you have done something clever, your algorithm for resolving queries prob
  You may be wondering why developers have "left well-enough alone" and not bothered with a multi-threaded implementation of locate/updatedb, or any of these older system utilities, in standard Linux distributions. There are a number of good practical and theoretical reasons for this, which you should think about from a software engineering perspective. For example, when I try to <tt>locate</tt> a file that doesn't exist on my system, it takes about a second, which is a good response time (indeed, faster secondary storage also benefits <tt>locate/updatedb</tt>). Even though the average desktop user might not benefit tremendously from our multi-threaded implementation, there are certainly situations where our implementation would drastically improve performance, e.g., in scenarios where databases must be built quickly and are rapidly queried. The moral of the story is that in the real world, you should carefully evaluate your situation and determine if a multi-threaded solution is actually worth it. They are more prone to errors, and multi-threaded codebases are much more difficult to maintain. For these reasons, during the days of Moore's law, a common practice was to write correct serial programs and let the ever-improving CPU clock speeds make up for the performance down the line. Since the death of Moore's law, we can no longer depend on clock speed to bail us out, so CPU performance gains must be obtained by exploiting parallelism.  
  
 A good solution to this assignment will demonstrate that you are proficient at writing concurrent userspace systems programs, which is a nice thing to have in your portfolio, but <b>do not post your solution publicly on GitHub.</b> If you would like to share this code with colleagues or potential employers, I suggest that you privately post to GitHub and provide them with a password.
- 
-[![](https://mermaid.ink/img/pako:eNplz8EKwjAMANBfKTm67eKxBw86D94Ej9ZDtmZaaFdpU0HG_t2ObTAwp5C8hGSA1msCCZGRqTb4DOiqz171Isd99xBVdRDprXNXN0UhpDgmY7WokbHBSDO0vl3Bn79cTzPaVCe0mdmgNaAER8Gh0fm4Yeop4Bc5UiBzqqnDZFmB6sdM59VnbdgHkB3aSCVgYn_79i1IDolWtPy4qPEHL8RQEg)](https://mermaid-js.github.io/mermaid-live-editor/edit#pako:eNplz8EKwjAMANBfKTm67eKxBw86D94Ej9ZDtmZaaFdpU0HG_t2ObTAwp5C8hGSA1msCCZGRqTb4DOiqz171Isd99xBVdRDprXNXN0UhpDgmY7WokbHBSDO0vl3Bn79cTzPaVCe0mdmgNaAER8Gh0fm4Yeop4Bc5UiBzqqnDZFmB6sdM59VnbdgHkB3aSCVgYn_79i1IDolWtPy4qPEHL8RQEg)
