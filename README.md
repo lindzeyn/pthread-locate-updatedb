@@ -103,8 +103,9 @@ Write `locate++` (this should be simple -- don't overthink it).
 
 #### Checkpoint 5 (70 points)
 
-As always, you should focus on writing <i>correct</i> code first before you start making your code more efficient. 
+You may use the `random_dir.zip` for a test case of medium size, or download the directory structure of https://github.com/torvalds/linux for a large test case.
 
+ 
 ## Bonus
 
 Unless you have done something clever, your algorithm for resolving queries probably amounts to a parallel brute-force search of a tree-like data-structure that represents the database. While this data-structure is required for reporting the <i>absolute</i> file names whose last name matches our pattern, it does not encode any meaningful information about the structure of <i>local</i> file names. Fortunately, there is a way to patch your tree-like data-structure with an additional data-structure(s) used for pattern matching that can quickly find which leaves (local file names) match the pattern. If you would like to trie your hand at some bonus, you will be awarded 10 extra points for a correct implementation of this faster data-structure.
