@@ -33,8 +33,6 @@ The program <tt>updatedb++</tt> must have the following prototype: <tt>updatedb+
  * Traverse the data-structure using the specified number of threads with proper load-balancing.
  * Once a match is found, the thread should immediately send the absolute file name to <tt>locate++</tt>.
  3. <b>Exit</b> if <tt>locate++</tt> is passed the kill flag `-k`; otherwise, Go to 1.
-
-![mermaid-diagram-20220209233823](https://user-images.githubusercontent.com/5934852/153351521-5951fd76-9e59-4c87-98a0-9c4f6c213ad4.png)
  
  ### Load Balancing
 Load balancing always poses a challenge when writing multi-threaded programs. Step 0 is I/O bound, so the thread pool does a fine job of keeping the threads and CPU busy; however, Step 2 requires more cleverness to evenly distribute the work amongst the threads, as seen by the following example. Suppose we have 2 threads and that we are traversing a binary tree such that the left subtree has the vast majority of nodes. It may seem natural to assign the first thread to the left subtree and the second thread to the right subtree, but then the second thread will finish way before the first thread, which will be left holding the bag. This situation can be avoided by recollecting some elementary facts about traversal algorithms.
