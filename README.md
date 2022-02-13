@@ -32,7 +32,7 @@ The program <tt>updatedb++</tt> must have the following prototype: <tt>updatedb+
  2. <b>Process</b> the query using the specified number of threads, then send the result back to locate++.
  * For processing the query, you must traverse the data-structure that represents the database using the specified number of threads with proper load-balancing.
  * Once a match is found, the thread should immediately send the relative filename to <tt>locate++</tt>.
- 3. <b>Exit</b> if <tt>locate++</tt> is passed the kill flag `-k`; otherwise, Go to 1.
+ 3. If <tt>locate++</tt> sent a kill query, then <b>Exit</b>; otherwise, Go to 1.
  
  ### Load Balancing
 Load balancing always poses a challenge when writing multi-threaded programs. Step 0 is I/O bound, so the thread pool does a fine job of keeping the threads and CPU busy; however, Step 2 requires more cleverness to evenly distribute the work amongst the threads, as seen by the following example. Suppose we have 2 threads and that we are traversing a binary tree such that the left subtree has the vast majority of nodes. It may seem natural to assign the first thread to the left subtree and the second thread to the right subtree, but then the second thread will finish way before the first thread, which will be left holding the bag. This situation can be avoided by recollecting some elementary facts about traversal algorithms.
@@ -53,7 +53,7 @@ For some of us, this might be the first time we are doing a serious concurrent p
  Below are some miscellanious things to keep in mind while writing your program.
 
  * `locate++` and `updatedb++` are not parent-child processes. Think about what IPC is most appropriate.
- * When `updatedb++` finds a match, the <i>absolute</i> file name of the matched file must be sent over to `locate++`. Think about introducing another pointer to tree data-structure to help you crawl up the tree to recover the absolute file name of the matched file.    
+ * When `updatedb++` finds a match, the relative filename (with respect to the root directory of the database) of the matched file must be sent over to `locate++`. Think about introducing another pointer to tree data-structure to help you crawl up the tree to recover the relative filename when a match is found.    
  * Once a node is processed, by definition, no threads will ever traverse any of the nodes below it again. This should give you a clever way to "reset things" so that your tree data-structure will be ready for the next query.
 
 ## Grading
