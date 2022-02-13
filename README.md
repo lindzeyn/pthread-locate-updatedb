@@ -58,7 +58,7 @@ For some of us, this might be the first time we are doing a serious concurrent p
 
 ## Grading
 
-If your program does not compile or produce executables called <tt>locate++</tt> and <tt>updatedb++</tt> after running <tt>make</tt> on the provided <tt>Makefile</tt>, then you will receive a zero. You will be deducted 1 point per <tt>gcc</tt> warning, so do not ignore them. Below is a detailed rundown of how you will be evaluated on this assignment.
+If your program does not compile or produce executables called <tt>locate++</tt> and <tt>updatedb++</tt> after running <tt>make</tt> on the provided <tt>Makefile</tt>, then you will receive at most a 30. You will be deducted 1 point per <tt>gcc</tt> warning, so do not ignore them. Below is a detailed rundown of how you will be evaluated on this assignment.
 
 ### Documentation & Style (10 points)
  
