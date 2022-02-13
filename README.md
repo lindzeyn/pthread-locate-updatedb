@@ -62,9 +62,9 @@ If your program does not compile or produce executables called <tt>locate++</tt>
 
 ### Documentation & Style (10 points)
  
-You will lose points if the definitions of your data-structures are mixed in with your other code. You should be refactoring your code along the way, do not save this task for the 11th hour.
-
 Generally speaking, if you are unsure about whether your practices in these two areas are acceptable, then defer to the Indian Hill style guidelines for the C programming language, or some other industrial standard that suits your liking. 
+ 
+You will lose points if the definitions of your data-structures are mixed in with your other code. You should be refactoring your code along the way, do not save this task for the 11th hour.
 
 If you are concerned about losing points here, then you should meet with your instructor during office hours to be sure things look right. 
 
