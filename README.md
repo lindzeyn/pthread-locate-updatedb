@@ -53,7 +53,7 @@ For some of us, this might be the first time we are doing a serious concurrent p
  Below are some miscellanious things to keep in mind while writing your program.
 
  * `locate++` and `updatedb++` are not parent-child processes. Think about what IPC is most appropriate.
- * When `updatedb++` finds a match, the relative filename (with respect to the root directory of the database) of the matched file must be sent over to `locate++`. Think about introducing another pointer to tree data-structure to help you crawl up the tree to recover the relative filename when a match is found.    
+ * When `updatedb++` finds a match, the relative filename (with respect to the root directory of the database) of the matched file must be sent over to `locate++`. Think about introducing another pointer your data-structure to help you crawl up the tree to recover the relative filename when a match is found.    
  * Once a node is processed, by definition, no threads will ever traverse any of the nodes below it again. This should give you a clever way to "reset things" so that your tree data-structure will be ready for the next query.
 
 ## Grading
