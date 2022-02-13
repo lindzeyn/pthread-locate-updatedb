@@ -91,7 +91,6 @@ In serial, get `locate++` and `updatedb++` talking to one another. In particular
 #### Checkpoint 2 (30 points) 
 
 In serial, have `updatedb++` process the `<query>` *without* building a database, i.e., traverse the directory structure rooted at `root_dir` and send to `locate++` the relative filename of any regular files that match the query. Note that `locate++` should immediately print any matches that it receives from `updatedb++`.
-
  
 #### Checkpoint 3 (40 points) 
 
@@ -99,18 +98,19 @@ In serial, have `updatedb++` construct a database by traversing the directory st
  
 #### Checkpoint 4 (55 points) 
 
-In parallel, have `updatedb++` construct a database by traversing the directory structure rooted at `root_dir`. In serial, `updatedb++` should process the query received by `locate++` by searching the database.
+In parallel, have `updatedb++` construct a database by traversing the directory structure rooted at `root_dir`. In serial, `updatedb++` processes the query received from `locate++` by searching the database. 
  
-#### Checkpoint 5 (70 points)
+ #### Checkpoint 5 (60 points) 
 
+In parallel, have `updatedb++` construct a database by traversing the directory structure rooted at `root_dir`. Each thread should log the number of regular files and directories that it adds to the database. In serial, `updatedb++` processes the query received from `locate++` by searching the database. 
+ 
+#### Checkpoint 6 (70 points)
 
-In parallel, have `updatedb++` construct a database by traversing the directory structure rooted at `root_dir`. In parallel, `updatedb++` should process the query received by `locate++` by searching the database.
-  
+In parallel, have `updatedb++` construct a database by traversing the directory structure rooted at `root_dir`. Each thread should log the number of regular files and directories that it adds to the database. In parallel, `updatedb++` processes the query received from `locate++` by searching the database. Each thread should log the number of regular files that it accesses. Your solution should have proper load balancing. 
  
 #### Test Cases
 You are encouraged to make your own small test cases. Download `random_dir.zip` for a test case of medium size, or download the directory structure of https://github.com/torvalds/linux for a large test case.
 
- 
 ## Bonus
 
 Unless you have done something clever, your algorithm for resolving queries probably amounts to a parallel brute-force search of a tree-like data-structure that represents the database. While this data-structure is required for reporting the <i>absolute</i> file names whose last name matches our pattern, it does not encode any meaningful information about the structure of <i>local</i> file names. Fortunately, there is a way to patch your tree-like data-structure with an additional data-structure(s) used for pattern matching that can quickly find which leaves (local file names) match the pattern. If you would like to trie your hand at some bonus, you will be awarded 10 extra points for a correct implementation of this faster data-structure.
