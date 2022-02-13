@@ -30,7 +30,7 @@ The program <tt>updatedb++</tt> must have the following prototype: <tt>updatedb+
  1. <b>Wait</b> for locate++ to send a query.
  * This will require IPC. We do not want <tt>locate++</tt> and <tt>updatedb++</tt> to busy-wait under any circumstance, so your IPC solution must account for this.
  2. <b>Process</b> the query using the specified number of threads, then send the result back to locate++.
- * Traverse the data-structure using the specified number of threads with proper load-balancing.
+ * For processing the query, you must traverse the data-structure that represents the database using the specified number of threads with proper load-balancing.
  * Once a match is found, the thread should immediately send the absolute file name to <tt>locate++</tt>.
  3. <b>Exit</b> if <tt>locate++</tt> is passed the kill flag `-k`; otherwise, Go to 1.
  
