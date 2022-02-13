@@ -13,7 +13,7 @@ Typically <tt>\<pattern\></tt> would be POSIX regular expression, but to keep th
  * full query: the entire local filename is given, e.g., <tt>locate++ -q foo.txt</tt>,
  * prefix query: a prefix of the local filename is given, e.g., <tt>locate++ -q foo*</tt>,
  * suffix query: a suffix of the local filename is given, e.g., <tt>locate++ -q *.txt</tt>,
- * kill query: send a signal to `updatedb++` to terminate that process, e.g., `locate++ -k`.
+ * kill query: tell `updatedb++` to terminate itself, e.g., `locate++ -k`.
  
 If the user does not adhere to the format above, print <tt>usage: locate++ -q \<pattern\> | -k</tt> to `stdout`. To simplify things, you may assume that <tt>updatedb++</tt> has been executed and that the database has been built before <tt>locate++</tt> executes. The program <tt>locate++</tt> should behave as follows:
  
