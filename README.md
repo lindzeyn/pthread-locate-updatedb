@@ -76,7 +76,7 @@ If you are concerned about losing points here, you may run a <tt>diff</tt> on yo
 
 ### Design (10 points)
 
-This assignment is in the C programming language, so we are placing a premium on performance (imagine that this code will be executing on a server with many thousands of running userland processes). You will be docked points if you are too cavalier with system resources, or if parts of your implementation are too convoluted or clunky. If there is any unjustified hard-coding, e.g., placing false limits on the sizes of data-structures for processing input data, then you will lose these 10 points, as your program will crash for large enough input (even though the test cases may not show this). Finally, you will lose some points here if there are any egregious memory leaks.
+This assignment is in the C programming language, so we are placing a premium on performance (imagine that this code will be executing on a server with many hundreds of running userland processes). You will be docked points if you are too cavalier with system resources, or if parts of your implementation are too convoluted or clunky. If there is any unjustified hard-coding, e.g., placing false limits on the sizes of data-structures for processing input data, then you will lose these 10 points, as your program will crash for large enough input (even though the test cases may not show this). Finally, you will lose some points here if there are any egregious memory leaks.
 
 If you are concerned about losing points here, then you should meet with your instructor during office hours to see if the part of your solution in question should be redesigned/simplified. 
 
@@ -84,25 +84,29 @@ If you are concerned about losing points here, then you should meet with your in
 
 The correctness of your program will account for the majority of your grade. To ensure that you maximize this score, you should develop your code with respect to the milestones listed below.
 
-#### Checkpoint 0 (30 points) 
+#### Checkpoint 1 (20 points) 
 
-Get two processes (that do not have the parent-child relation) talking to one another. Provide basic sanity-checking of input arguments to both programs.
+In serial, get `locate++` and `updatedb++` talking to one another. In particular, have `updatedb++` print the query `<query>` sent by `locate++` to `stdout`, and then have `updatedb++` send the message `received <query>` to `locate++`, which `locate++` then prints to `stdout`. If `locate++` sends a kill query, then `updatedb++` should terminate. Also, provide basic sanity-checking of input arguments to both programs. 
  
-#### Checkpoint 1 (30 points) 
+#### Checkpoint 2 (30 points) 
 
-Write the serial version of updatedb++.
+In serial, have `updatedb++` process the `<query>` *without* building a database, i.e., traverse the directory structure rooted at `root_dir` and send to `locate++` the relative filename of any regular files that match the query. Note that `locate++` should immediately print any matches that it receives from `updatedb++`.
 
-#### Checkpoint 2 (35 points) 
-
-
-#### Checkpoint 3 (50 points) 
-
-Write `locate++` (this should be simple -- don't overthink it). 
  
-#### Checkpoint 4 (60 points) 
+#### Checkpoint 3 (40 points) 
 
+In serial, have `updatedb++` construct a database by traversing the directory structure rooted at `root_dir`. Once the database is built, `updatedb++` should process the query received by `locate++` by searching the database.
+ 
+#### Checkpoint 4 (55 points) 
+
+In parallel, have `updatedb++` construct a database by traversing the directory structure rooted at `root_dir`. In serial, `updatedb++` should process the query received by `locate++` by searching the database.
+ 
 #### Checkpoint 5 (70 points)
 
+
+In parallel, have `updatedb++` construct a database by traversing the directory structure rooted at `root_dir`. In parallel, `updatedb++` should process the query received by `locate++` by searching the database.
+  
+ 
 #### Test Cases
 You are encouraged to make your own small test cases. Download `random_dir.zip` for a test case of medium size, or download the directory structure of https://github.com/torvalds/linux for a large test case.
 
