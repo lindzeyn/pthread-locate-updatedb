@@ -29,7 +29,7 @@ The program <tt>updatedb++</tt> must have the following prototype: <tt>updatedb+
  * Since we do not want `locate++` to access the disk, we need a data-structure to reside in memory that represents the database. Storing all of the absolute file names as an array of strings is not an option. File systems are inherently tree-like, so a natural choice is to use a tree-like data-structure to represent the database. You should build this data-structure top-down level-by-level in a mutli-threaded fashion using a <i>thread pool</i>. 
  1. <b>Wait</b> for locate++ to send a query.
  * This will require IPC. We do not want <tt>locate++</tt> and <tt>updatedb++</tt> to busy-wait under any circumstance, so your IPC solution must account for this.
- 2. <b>Process</b> the query once signaled using the specified number of threads, then report the result to locate++.
+ 2. <b>Process</b> the query using the specified number of threads, then send the result back to locate++.
  * Traverse the data-structure using the specified number of threads with proper load-balancing.
  * Once a match is found, the thread should immediately send the absolute file name to <tt>locate++</tt>.
  3. <b>Exit</b> if <tt>locate++</tt> is passed the kill flag `-k`; otherwise, Go to 1.
