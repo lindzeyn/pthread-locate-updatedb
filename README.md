@@ -8,14 +8,14 @@ Before you begin the assignment, you should first play around with <tt>locate</t
 Traditionally, the utility <tt>updatedb</tt> creates a database that resides on disk that <tt>locate</tt> queries, but we will be doing things a bit differently: the database will reside in RAM so <tt>locate++</tt> never has to directly access secondary storage. In other words, <tt>updatedb++</tt> will serve as a daemon that runs in the background that <tt>locate++</tt> will query. To keep things simple, you may assume that only one copy of `updatedb++` and `locate++` will run at a time, as allowing for multiple running instances of these programs would introduce even more concurrency issues. Your programs <tt>locate++</tt> and <tt>updatedb++</tt> must be written completely within in the C programming language using POSIX <tt>pthreads</tt>. 
 
 ### <tt>locate++</tt>
-The program <tt>locate++</tt> must have the following prototype: <tt>locate++ -q \<pattern\> | -k</tt>.
+The program <tt>locate++</tt> must have the following prototype: <tt>locate++ -q \<pattern\> -k</tt>.
 Typically <tt>\<pattern\></tt> would be POSIX regular expression, but to keep things simple, you may assume that <tt>\<pattern\></tt> is in one of the following forms:
  * full query: the entire local filename is given, e.g., <tt>locate++ -q foo.txt</tt>,
  * prefix query: a prefix of the local filename is given, e.g., <tt>locate++ -q foo*</tt>,
  * suffix query: a suffix of the local filename is given, e.g., <tt>locate++ -q *.txt</tt>,
  * kill query: tell `updatedb++` to terminate itself, e.g., `locate++ -k`.
  
-If the user does not adhere to the format above, print <tt>usage: locate++ -q \<pattern\> | -k</tt> to `stdout`. To simplify things, you may assume that <tt>updatedb++</tt> has been executed and that the database has been built before <tt>locate++</tt> executes. The program <tt>locate++</tt> should behave as follows:
+If the user does not adhere to the format above, print <tt>usage: locate++ -q \<pattern\> -k</tt> to `stdout`. To simplify things, you may assume that <tt>updatedb++</tt> has been executed and that the database has been built before <tt>locate++</tt> executes. The program <tt>locate++</tt> should behave as follows:
  
  1. Send <tt>\<pattern\></tt> to <tt>updatedb++</tt>.
  2. <i>Immediately</i> print any match that <tt>updatedb++</tt> discovers.
